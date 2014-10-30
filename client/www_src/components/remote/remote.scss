@@ -1,0 +1,69 @@
+.arduino-rover .remote {
+	
+	background-color: black;
+	
+	.video {
+		text-align: center;
+		height: 100%;
+		border-top: solid 1px silver;
+		border-bottom: solid 1px silver;
+		
+		img {
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			z-index: -1;
+		}
+		
+		.sensor {		
+			width: 100%;
+			@include flex(1);
+			color: white;
+			text-shadow: 3px 3px 3px black;
+			font-weight: bolder;
+			font-size: 130%;
+			
+			.shoot {
+				top:50%;
+				left: 45%;
+				width:5%;
+				position: absolute;
+				background: none;
+				border: none;
+				text-shadow: 3px 3px 3px black;
+				color: white;
+				z-index: 100;
+			}
+			
+			.shoot:before {
+				font-size: 50px;
+			}
+		}
+		
+		.control {
+			width: 100%;
+			text-align: right;
+			
+			.keypad {
+				margin: 10px;
+				width: 215px;
+				display: inline-block;
+				
+				.button {
+					background: none;
+					border: solid white 2px;
+					text-shadow: 3px 3px 3px black;
+					color: white;
+					margin-top: 2px;
+					margin-bottom: 2px;
+				}
+
+				.blank {
+					visibility: hidden;
+				}
+			}
+		}
+	}	
+}

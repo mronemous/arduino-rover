@@ -1,0 +1,22 @@
+{
+  "curly":true, 
+  "devel":true,  
+  "eqeqeq": true,
+  "eqnull": true,  
+  "latedef": true,  
+  "maxdepth": 3,
+  "newcap": true,
+  "globals":{
+    "angular": true,
+    "cordova": true,
+    "StatusBar": true
+  },
+  "browser": true,      
+  "indent":2,
+  "quotmark": "single",
+  "strict": false,
+  "trailing": true,
+  "undef":true,
+  "unused":true,
+	"esnext": true
+}

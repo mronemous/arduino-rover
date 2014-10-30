@@ -1,0 +1,47 @@
+<ion-view title="Remote" class="remote">
+  <ion-content class="has-header">
+
+		<div class="layout-vflexbox video">
+
+			<img ng-src="{{remote.host.camera}}"/>
+
+			<div class="sensor" on-drag-up="remote.drag.up()" on-drag-down="remote.drag.down()"
+					 on-drag-left="remote.drag.left()" on-drag-right="remote.drag.right()" on-release="remote.drag.release()">
+				<div class="row">
+					<div class="col">{{remote.rover.sonarF.name}}</div>
+					<div class="col">{{remote.rover.sonarB.name}}</div>
+					<div class="col">{{remote.rover.compass.name}}</div>
+					<div class="col">{{remote.rover.gps.name}}</div>
+				</div>
+				<div class="row">
+					<div class="col">{{remote.rover.sonarF.value}}</div>
+					<div class="col">{{remote.rover.sonarB.value}}</div>
+					<div class="col">{{remote.rover.compass.value}}</div>
+					<div class="col">{{remote.rover.gps.value}}</div>
+				</div>
+				<button class="button button-large icon ion-pinpoint shoot" on-tap="remote.rover.rocketLauncher.shoot()" ></button>
+			</div>
+
+			<div class="control">
+
+				<div class="keypad">
+
+					<button class="button button-medium blank"></button>
+					<button class="button button-medium icon ion-arrow-up-a" on-touch="remote.rover.forward(100)" on-release="remote.rover.stop()"></button>
+					<button class="button button-medium blank"></button>
+
+					<button class="button button-medium icon ion-arrow-left-a" on-touch="remote.rover.left(100)" on-release="remote.rover.stop()"></button>
+					<button class="button button-medium ion-stop" on-touch="remote.rover.stop()"></button>
+					<button class="button button-medium icon ion-arrow-right-a" on-touch="remote.rover.right(100)" on-release="remote.rover.stop()"></button>
+
+					<button class="button button-medium blank"></button>
+					<button class="button button-medium icon ion-arrow-down-a" on-touch="remote.rover.backward(100)" on-release="remote.rover.stop()"></button>
+					<button class="button button-medium blank"></button>
+
+				</div>
+			</div>
+
+		</div>
+
+  </ion-content>
+</ion-view>
