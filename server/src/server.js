@@ -8,9 +8,6 @@ var express = require('express')
 import {Rover} from './models/rover';
 var rover = new Rover();
 
-import {RocketLauncher} from './models/rocketLauncher';
-var rocketLauncher = new RocketLauncher();
-
 server.listen(3009);
 
 //app.use(express.static('www'));
@@ -28,58 +25,45 @@ io.configure('development', () => {
     ]);
 });
 
+var connectedCount = 0;
+
+//Not sure of this is needed but I want to make sure the rover stops if something bad happens.
+//TODO: Is there a better way to do this.
+try {
+
 io.sockets.on('connection', (socket) => {
+   	
+	  connectedCount++;
+
     var clientId = socket.id;
 
     socket.emit('connected', {
         message: 'You are connected.',
         id: clientId
     });
-
-	  //Movement
-    socket.on('forward', (power) => {
-				rover.forward(power);
+	
+		//Power is a value -1.00 - 1.00
+	
+	  //Movement 
+    socket.on('throttle', (power) => {
+				rover.throttle(power);
     });
 
-    socket.on('backward', (power) => {
-        rover.backward(power);
+    socket.on('steer', (power) => {
+        rover.steer(power);
     });
 	
-	  socket.on('left', (power) => {
-        rover.left(power);
-    });
-	
-	 socket.on('right', (power) => {
-        rover.right(power);
-    });
-
-    socket.on('stop', (power) => {
+    socket.on('stop', () => {
         rover.stop();
     });
 	
-		//Rocket Launcher
-		socket.on('rocketLauncher.up', () => {
-				rocketLauncher.up();
+		//Camera
+		socket.on('camera.tilt', (power) => {
+				rover.cameraTilt(power);
 		});
 
-		socket.on('rocketLauncher.down', () => {
-				rocketLauncher.down();
-		});
-
-		socket.on('rocketLauncher.left', () => {
-				rocketLauncher.left();
-		});
-
-	  socket.on('rocketLauncher.right', () => {
-				rocketLauncher.right();
-		});
-
-	  socket.on('rocketLauncher.stop', () => {
-				rocketLauncher.stop();
-		});
-
-	  socket.on('rocketLauncher.shoot', () => {
-				rocketLauncher.shoot();
+		socket.on('camera.rotate', (power) => {
+				rover.cameraRotate(power);
 		});
 
 		//Sensor
@@ -97,4 +81,17 @@ io.sockets.on('connection', (socket) => {
 		
 		 	socket.emit('compass.changed', reading);
 		}
+		
+		socket.on("disconnect", function(){
+     connectedCount--;
+		 if(connectedCount <= 0) {
+		 	rover.stop(); 
+		 }
+		});
 });
+
+}
+catch(e) {
+	rover.stop();
+	throw e;
+}

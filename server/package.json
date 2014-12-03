@@ -15,8 +15,7 @@
     "johnny-five": "~0.7.3",
     "markedejs": "0.1.0",
     "ejs": "*",
-    "traceur": "~0.0.51",
-		"usb": "*"
+    "traceur": "~0.0.51"
   },
   "devDependencies": {
     "gulp": "^3.5.6",

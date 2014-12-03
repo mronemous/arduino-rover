@@ -6,35 +6,43 @@ export class Rover {
 	
 	constructor() {
 		
-		this.board = new j5.Board({port: "/dev/ttyS0"});	
+		this.board = new j5.Board({port: "/dev/ttyACM0"});	
 		this.board.on("ready", () => {
 			
-			this.motorL = new j5.Motor({
-				pins: {
-					pwm: 11,
-					dir: 13,
-					brake: 8
-				},
-				current: {
-					pin: 'A1',
-					freq: 250,
-					range: [0, 2000]
-				}
+			this.throttleMotor = new j5.Servo({
+				pin: 11,
+			  type: "continuous"
 			});
 
-			this.motorR = new j5.Motor({
-				pins: {
-					pwm: 3,
-					dir: 12,
-					brake: 9
-				},
-				current: {
-					pin: 'A0',
-					freq: 250,
-					range: [0, 2000]
-				}
+			this.steerServo = new j5.Servo({
+				pin: 10,
+			  type: "continuous"
 			});
 		
+			this.tiltServo = new j5.Servo({
+				pin: 6,
+			  type: "continuous"
+			});
+
+			this.rotateServo = new j5.Servo({
+				pin: 5,
+			  type: "continuous"
+			});
+		
+		
+		  /*
+			
+			Back - 11
+			Front - 10
+			Steering - 9
+			Pan Up/Down - 6
+			Pan Left/Right - 5
+			Sonar - 7, 4
+			Compass - SDA/SDL
+			GPS - ?
+			
+		  */
+			/*		
 			var me = this; //Because j5 uses explicit scope in the callback we need to make rover this available.
 		
 			this.sonarF = new j5.Ping({pin: 7, 
@@ -71,7 +79,7 @@ export class Rover {
     		});
 
 			});
-		
+		 */
 		});
 	}
 
@@ -87,49 +95,46 @@ export class Rover {
 	
 	}
 
-	right(pct) {
-		var power = this.pctToPower(pct);
-		this.motorR.rev(power);
-		this.motorL.fwd(power);
+	throttle(power) {
+		var signal = this.signalPower(power);
+		this.throttleMotor.to(signal);
 		
-		console.log('right ' + power);
+		console.log('throttle ' + signal);
 	}
 
-	left(pct) {
-		var power = this.pctToPower(pct);
-		this.motorR.fwd(power);
-		this.motorL.rev(power);
+	steer(power) {
+		var signal = this.signalPower(power);
+		this.steerServo.to(signal);
 		
-		console.log('left ' + power);
+		console.log('steer ' + signal);
 	}
 
-	forward(pct) {
-		var power = this.pctToPower(pct);
-		this.motorR.fwd(power);
-		this.motorL.fwd(power);
-		
-		console.log('forward ' + power);
+	cameraTilt(power) {
+		var signal = this.signalPower(power);
+		this.tiltServo.to(signal);
+	
+		console.log('camera.tilt ' + signal);
 	}
 
-	backward(pct) {
-		var power = this.pctToPower(pct);
-		this.motorR.rev(power);
-		this.motorL.rev(power);
+	cameraRotate(power) {
+		var signal = this.signalPower(power);
+		this.rotateServo.to(signal);
 		
-		console.log('backward ' + power);
+		console.log('camera.rotate ' + signal);
 	}
 
 	stop() {
-		this.motorR.stop();
-		this.motorL.stop();
+		var signal = this.signalPower(0);
+		this.throttleMotor.to(signal);
+		this.steerServo.to(signal);
 		
-		console.log('stop ');
+		console.log('stop ' + signal);
 	}
 
-	pctToPower(pct) {
-		if(pct < 100) { pct = pct + 25;}
-		else if(pct > 100) { pct = 100; }
+  //Power is value -1.0 - 1.0 convert to 0 - 180
+	signalPower(power) {
+		var signal = (power * 90) + 90;
 		
-		return ((pct / 100) * 255);
+		return signal
 	}
 }

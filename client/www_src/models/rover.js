@@ -15,8 +15,9 @@ class Rover {
 		this.sonarB = new Sensor({name: 'SonarB', value: '-'});
 		this.compass = new Sensor({name: 'Compass', value: '-'});
 		this.gps = new Sensor({name: 'GPS', value: '-'});
-				
-		this.rocketLauncher = new RocketLauncher();
+		
+		this.lastPower = {};
+		this.minPowerChange = 0.01;
 	}
 	
 	get connection() {  
@@ -28,29 +29,54 @@ class Rover {
 				this._connection = new Connection();
 			}
 		}
-
-		this.rocketLauncher.connection = this._connection;
 		return this._connection;
 	}
 
-	forward(power) {
-		this.connection.send('forward', power);
+	steer(power) {		
+		this.send('steer', power);
 	}
 
-	backward(power) {
-		this.connection.send('backward', power);
+	throttle(power) {
+		this.send('throttle', power);
 	}
 
-	left(power) {
-		this.connection.send('left', power);
+	cameraTilt(power) {
+		this.send('camera.tilt', power);
 	}
 
-	right(power) {
-		this.connection.send('right', power);
+	cameraRotate(power) {
+		this.send('camera.rotate', power);
 	}
 
 	stop() {		
-		this.connection.send('stop');
+		this.send('stop', 0.5);
+	}
+
+	send(command, power) {
+		
+		var lastPower = this.lastPower[command];
+		var delta = Math.abs(power - lastPower);
+		
+		var log = {
+			command: command,
+			power: power, 
+			lastPower: lastPower,
+			delta: delta
+		};
+				
+		if(lastPower == null 
+			 || (delta > this.minPowerChange) 
+			 //NOTE: When we stop we ignore the minPowerChange, but also ignore duplicate stops.
+			 || (power == 0.5 && lastPower != 0.5)) {
+			
+			this.connection.send(command, power);
+			console.log(JSON.stringify(log));
+		}
+		else {
+			console.log('Not sent ' + JSON.stringify(log));
+		}
+		
+		this.lastPower[command] = power;
 	}
 
 	connect(host) {
@@ -88,5 +114,5 @@ class Rover {
 
 Rover.host = {
 	socketio: 'http://192.168.1.95:3009',
-	camera: 'http://192.168.1.95:8081'
+	camera: 'http://192.168.1.95:8080'
 };
