@@ -10,23 +10,41 @@ class RemoteController {
 		this.host = Rover.host;
 		this.rover.connect(Rover.host.socketio);
 		
-		this.cameraDragPad = {xLabel: 'Rotate', yLabel: 'Pan', yOffset: 15, dragged: (data) => { this.cameraDragged(data); }};
-		this.movementDragPad = {xLabel: 'Steering', yLabel: 'Throttle', dragged: (data) => { this.movementDragged(data); }};
+		this.cameraDragPad = {xLabel: 'Rotate', yLabel: 'Pan', yOffset: 15, 
+			released: (data) => { this.cameraReleased(data); }, 
+			dragged: (data) => { this.cameraDragged(data); }};
+		this.movementDragPad = {xLabel: 'Steering', yLabel: 'Throttle', 
+			released: (data) => { this.movementReleased(data); }, 											
+			dragged: (data) => { this.movementDragged(data); }};
+	}
+	
+	cameraReleased(data) {
+
 	}
 	
 	cameraDragged(data) {
-
-		this.rover.cameraRotate(data.px);
-	  //NOTE: Invert because servo setup for pilots apparently:)
+	
+   	//HACK: Invert until I resolve this bug.
+		this.rover.cameraRotate(data.px * -1); 
 		this.rover.cameraTilt(data.py * -1); 
 	
 		//console.log('cameraDragPad ' + JSON.stringify(data));
+	}
+
+	movementReleased(data) {
+		this.rover.throttle(0);
+		this.rover.steer(0);
+		//TODO: Clean this up we shouldn't reference the UI here.
+		data.indicatorX.css({left: data.xMid + 'px'});
+		data.indicatorY.css({top: data.yMid +  'px'});
+		
 	}
 	
 	movementDragged(data) {
 
 		this.rover.steer(data.px);
-		this.rover.throttle(data.py);
+		//HACK: Invert until I resolve this bug.
+		this.rover.throttle(data.py * -1);
 		
 		//console.log('movmentDragPad ' + JSON.stringify(data));
 	}
@@ -81,19 +99,14 @@ class DragPadDirective {
 							
 				var released = function(e) {
 
-					indicatorX.css({left: xMid + 'px'});
-					indicatorY.css({top: yMid +  'px'});
-					
-					if($scope.ngModel.dragged) {
-						$scope.ngModel.dragged({
-							x: xMid,
-							y: yMid,
-							px: 0,
-							py: 0
+					if($scope.ngModel.released) {
+						$scope.ngModel.released({
+							indicatorX: indicatorX,
+							indicatorY: indicatorY,
+							xMid: xMid,
+							yMid: yMid
 						});
-						
-						//console.log('released');
-					}
+					}					
 				};
 				var releaseGesture = $ionicGesture.on('release', released, $element);
 				
