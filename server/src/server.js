@@ -80,10 +80,10 @@ io.sockets.on('connection', (socket) => {
     }
 
     socket.on("disconnect", function(){
-    connectedCount--;
-     if(connectedCount <= 0) {
-        rover.stop(); 
-     }
+        connectedCount--;
+        if(connectedCount <= 0) {
+            rover.stop(); 
+        }
     });
 });
 
