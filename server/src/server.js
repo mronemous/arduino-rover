@@ -38,47 +38,44 @@ io.sockets.on('connection', (socket) => {
     var clientId = socket.id;
 
     socket.emit('connected', {
-    message: 'You are connected.',
-    id: clientId
+        message: 'You are connected.',
+        id: clientId
     });
 
     //Power is a value -1.00 - 1.00
 
     //Movement
     socket.on('throttle', (power) => {
-            rover.throttle(power);
+        rover.throttle(power);
     });
 
     socket.on('steer', (power) => {
-    rover.steer(power);
+        rover.steer(power);
     });
 
     socket.on('stop', () => {
-    rover.stop();
+        rover.stop();
     });
 
     //Camera
     socket.on('camera.tilt', (power) => {
-            rover.cameraTilt(power);
+        rover.cameraTilt(power);
     });
 
     socket.on('camera.rotate', (power) => {
-            rover.cameraRotate(power);
+        rover.cameraRotate(power);
     });
 
     //Sensor
     rover.sonarF_changed = (reading) => {
-
         socket.emit('sonarF.changed', reading);
     }
 
     rover.sonarB_changed = (reading) => {
-
         socket.emit('sonarB.changed', reading);
     }
 
     rover.compass_changed = (reading) => {
-
         socket.emit('compass.changed', reading);
     }
 
