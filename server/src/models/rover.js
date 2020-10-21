@@ -131,7 +131,7 @@ export class Rover {
 		console.log('stop ' + signal);
 	}
 
-  //Power is value -1.0 - 1.0 convert to 0 - 180
+    //Power is value -1.0 - 1.0 convert to 0 - 180
 	signalPower(power) {
 		var signal = (power * 90) + 90;
 		

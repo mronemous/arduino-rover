@@ -38,7 +38,7 @@ gulp.task('install', function() {
 
   return gulp.src(paths.install.src)
     .pipe(gulp.dest(paths.install.build))
-	 	.pipe(install({production: true}));
+	.pipe(install({production: true}));
 });
 
 // -- SCRIPTS -- //
@@ -46,14 +46,14 @@ gulp.task('script', function() {
 
   return gulp.src(paths.script.src)
     .pipe(ifEnvironment(ENVIRONMENT.DEVELOPMENT, sourcemaps.init()))
-	  .pipe(traceur())
+	.pipe(traceur())
     .pipe(ifEnvironment(ENVIRONMENT.DEVELOPMENT, sourcemaps.write()))
     .pipe(gulp.dest(paths.script.build));
 });
 
 gulp.task('watch', function() {
 
-  gulp.watch(paths.script.src, ['script']);
-	//gulp.watch(paths.assets.src, ['assets']);
+    gulp.watch(paths.script.src, ['script']);
+    //gulp.watch(paths.assets.src, ['assets']);
 
 });
